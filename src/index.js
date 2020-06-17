@@ -1,17 +1,61 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { render } from 'react-dom';
 import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+
+class News extends React.Component{
+  state = {
+    loading: false,
+    apiKey: '2907946de4594cd38c927ad903fc5517',
+    data: []
+  }
+
+  componentDidMount(){
+    this.setState({loading:true})
+    fetch(`https://newsapi.org/v2/top-headlines?sources=bbc-news&apiKey=${this.state.apiKey}`)
+      //.then(data => data.json())
+      //.then(data => this.setState({data, loading: false}) )
+      //.catch((error) => console.log(error));
+      .then((response) => {
+        // Add this check and throw an error if it fails
+        if (!response.ok) {
+            throw Error(response.statusText);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        this.setState({
+          data: data.articles,
+          loading: false
+        })
+      })
+      .catch((error) => console.log(error));
+  }
+  
+  render(){
+    const { loading, data } = this.state;
+    return(
+      <div>
+        {
+        loading
+          ? "Loading..."
+          : <div>
+              {data.map(article =>{
+                return (
+                  <div>
+                    <h2>{article.title}</h2>
+                  </div>
+                )
+              })}
+            </div>
+        }
+      </div>
+    )
+  }
+}
+
+render(
+	<News/>, 
+	document.getElementById('root')
+)
