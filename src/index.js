@@ -41,10 +41,14 @@ class News extends React.Component{
         loading
           ? "Loading..."
           : <div>
+              <h1>Latest News</h1>
               {data.map(article =>{
                 return (
-                  <div>
+                  <div className="article">
+                    <img src = {article.urlToImage} alt = {article.title}/>
+                    <strong>{article.publishedAt}</strong><br/>
                     <h2>{article.title}</h2>
+                    <p>{article.description}</p>
                   </div>
                 )
               })}
